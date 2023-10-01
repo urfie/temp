@@ -13,6 +13,7 @@ salary INT,
 department STRING)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
+Panitia Konferensi Big Data Indonesia 2022@247
 
 Insert from csv
 
