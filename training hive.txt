@@ -1,0 +1,23 @@
+Create table on hive 
+
+CREATE TABLE IF NOT EXISTS mytest.emp (
+firstname STRING,
+lastname STRING,
+email STRING,
+phone STRING,
+gender STRING,
+age INT,
+jobtitle STRING,
+yearsofexperience INT,
+salary INT,
+department STRING);
+
+
+Insert from csv
+
+LOAD DATA LOCAL INPATH '/home/hadoop/data/employees.csv' INTO TABLE mytest.emp;
+
+SELECT * FROM emp;
+
+
+
