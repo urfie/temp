@@ -15,7 +15,7 @@ department STRING);
 
 Insert from csv
 
-LOAD DATA LOCAL INPATH '/home/hadoop/data/employees.csv' INTO TABLE mytest.emp;
+LOAD DATA LOCAL INPATH '/home/hadoop/dataset/employees.csv' INTO TABLE mytest.emp;
 
 SELECT * FROM emp;
 
