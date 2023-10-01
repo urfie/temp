@@ -10,7 +10,8 @@ age INT,
 jobtitle STRING,
 yearsofexperience INT,
 salary INT,
-department STRING);
+department STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
 
 
 Insert from csv
