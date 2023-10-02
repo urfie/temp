@@ -40,6 +40,9 @@ LOCATION '/user/yava/dataset/emp'
     <value>${user.name}</value>
   </property>
 
+spark-default.conf
+spark.sql.warehouse.dir=hdfs://localhost:9000/user/hive/warehouse
+
 .bashrc
 export PYSPARK_DRIVER_PYTHON='jupyter'
 export PYSPARK_DRIVER_PYTHON_OPTS='notebook --no-browser --port=8889'
