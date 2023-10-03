@@ -1,0 +1,45 @@
+wget https://github.com/urfie/temp/raw/main/emp_date.csv
+
+
+hdfs dfs -mkdir /user/hadoop/mydata/employee
+hdfs dfs -put emp_date.csv /user/hadoop/mydata/employee
+
+#Create database
+
+CREATE DATABASE mytest;
+
+#Hive Commands
+#Create table mytest.employee
+
+CREATE TABLE IF NOT EXISTS mytest.employee(
+firstname STRING,
+lastname STRING,
+email STRING,
+gender STRING,
+age INT,
+jobtitle STRING,
+yearsofexperience BIGINT,
+salary INT,
+department STRING, 
+datestamp DATE)
+STORED AS ORC;
+
+#Create external table mytest.employee_ext
+
+CREATE EXTERNAL TABLE mytest.employee_ext(
+firstname STRING,
+lastname STRING,
+email STRING,
+gender STRING,
+age INT,
+jobtitle STRING,
+yearsofexperience BIGINT,
+salary INT,
+department STRING, 
+datestamp DATE)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION 'hdfs://127.0.0.1:9000/user/hadoop/mydata/employee;
+
+
