@@ -1,0 +1,202 @@
+#add user
+
+sudo adduser hadoop
+sudo usermod -aG sudo hadoop
+
+Step 1 — Installing Java
+
+To get started, you’ll update our package list and install OpenJDK, the default Java Development Kit on Ubuntu 20.04:
+
+sudo apt update
+#sudo apt install default-jdk
+sudo apt install openjdk-8-jdk -y
+
+java -version
+---
+openjdk version "1.8.0_382"
+OpenJDK Runtime Environment (build 1.8.0_382-8u382-ga-1~22.04.1-b05)
+OpenJDK 64-Bit Server VM (build 25.382-b05, mixed mode)
+-----
+
+wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.1/hadoop-3.3.1.tar.gz
+
+shasum -a 512 hadoop-3.3.1.tar.gz
+cat hadoop-3.3.1.tar.gz.sha512
+
+----
+SHA512 (hadoop-3.3.1.tar.gz) = 2fd0bf74852c797dc864f373ec82ffaa1e98706b309b30d1effa91ac399b477e1accc1ee74d4ccbb1db7da1c5c541b72e4a834f131a99f2814b030fbd043df66
+------
+
+tar xzf hadoop-3.3.1.tar.gz
+
+sudo mv hadoop-3.3.1 /usr/local/hadoop
+
+readlink -f /usr/bin/java | sed "s:bin/java::"
+--------------
+Output
+/usr/lib/jvm/java-11-openjdk-amd64/
+--------------
+
+vi /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+
+#export JAVA_HOME=
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+
+### CEK HADOOP MR ###
+mkdir ~/input
+cp /usr/local/hadoop/etc/hadoop/*.xml ~/input
+
+/usr/local/hadoop/bin/hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.1.jar grep ~/input ~/grep_example 'allowed[.]*'
+
+cat ~/grep_example/*
+### END CEK MR ##
+
+sudo apt install openssh-server openssh-client -y
+ssh-keygen -t rsa
+sudo cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+sudo chmod 640 ~/.ssh/authorized_keys
+ssh localhost
+
+
+
+dirname $(dirname $(readlink -f $(which java)))
+
+vi .bashrc
+source .bashrc
+vi $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+ls $HADOOP_HOME/etc/hadoop/hadoop-env.sh*
+ls: cannot access '/usr/local/hadoop/etc/hadoop/hadoop-env.sh*': No such file or directory
+less .bashrc
+mv hadoop-3.3.1
+hadoop-3.3.1/        hadoop-3.3.1.tar.gz  
+sudo mv hadoop-3.3.1 /usr/local/hadoop
+[sudo] password for hadoop: 
+vi $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+vi $HADOOP_HOME/etc/hadoop/core-site.xml
+vi $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+vi $HADOOP_HOME/etc/hadoop/mapred-site.xml
+vi $HADOOP_HOME/etc/hadoop/yarn-site.xml
+ 
+ 
+ ###########################################################
+ #################################################################
+ #################  install spark ##############################
+ #############################################################
+ ##############################################################
+ 
+ wget https://archive.apache.org/dist/spark/spark-3.0.2/spark-3.0.2-bin-hadoop3.2.tgz
+ 
+wget https://dlcdn.apache.org/hive/hive-3.1.2/apache-hive-3.1.2-bin.tar.gz
+ 
+ 
+ from
+ <value>jdbc:derby:;databaseName=metastore_db;create=true</value>
+ to
+<value>jdbc:derby://localhost:1527/metastore_db;create=true</value>
+
+
+spark.sql.warehouse.dir=hdfs://localhost:9000/user/hive/warehouse
+
+####################
+vi /usr/local/hadoop/etc/hadoop/mapred-site.xml 
+
+add value : 
+ <property>
+  <name>yarn.app.mapreduce.am.env</name>
+  <value>HADOOP_MAPRED_HOME=/usr/local/hadoop</value>
+</property>
+<property>
+<name>mapreduce.map.env</name>
+  <value>HADOOP_MAPRED_HOME=/usr/local/hadoop</value>
+</property>
+<property>
+  <name>mapreduce.reduce.env</name>
+  <value>HADOOP_MAPRED_HOME=/usr/local/hadoop</value>
+</property> 
+
+### execute spark-sql with conf
+
+spark-sql --conf spark.hadoop.hive.metastore.warehouse.dir=/home/hadoop/apache-hive-3.1.2-bin
+
+(the same value as in file hive-site.xml)
+
+
+mysql : 
+
+sudo apt-get install mysql-server
+#download mysql-connector-j_8.0.33-1ubuntu22.04_all.deb di https://downloads.mysql.com/archives/c-j/
+sudo dpkg -i mysql-connector-j_8.0.33-1ubuntu22.04_all.deb
+ln -s /usr/share/java/mysql-connector-java-8.0.33.jar $HIVE_HOME/lib/mysql-connector-java.jar
+
+
+Step 1. Log in to MySQL as root (using sudo will bypass MySQL’s password prompt):
+
+$ sudo mysql -u root
+
+Step 2. Change to the mysql database and set the plugin to mysql_native_password for the root user:
+
+mysql> USE mysql;
+mysql> UPDATE user SET plugin='mysql_native_password' WHERE User='root';
+mysql> FLUSH PRIVILEGES;
+
+Step 3. You have to change the root password for this to work. Even just specifying the current password is fine too, but this command must be executed:
+
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password_here';
+mysql> exit;
+
+Step 4. Lastly, restart MySQL for the changes to take effect:
+
+$ sudo systemctl restart mysql
+
+create user 'hiveuser'@'localhost' identified by 'password247';
+grant all privileges on *.* to 'hiveuser'@'localhost';
+flush privileges;
+
+-------------- edit hive-site.xml --------------------
+ <property>
+    <name>javax.jdo.option.ConnectionURL</name>
+    <value>jdbc:mysql://localhost:3306/hive</value>
+    <description>JDBC connection string used by Hive Metastore</description>
+  </property>
+ 
+  <property>
+    <name>javax.jdo.option.ConnectionDriverName</name>
+    <value>com.mysql.jdbc.Driver</value>
+    <description>JDBC Driver class</description>
+  </property>
+ 
+  <property>
+      <name>javax.jdo.option.ConnectionUserName</name>
+      <value>hive</value>
+      <description>Metastore database user name</description>
+  </property>
+ 
+  <property>
+      <name>javax.jdo.option.ConnectionPassword</name>
+      <value>password_hive</value>
+      <description>Metastore database password</description>
+  </property>
+ 
+  <property>
+      <name>hive.metastore.uris</name>
+      <value>thrift://localhost:9084</value>
+      <description>Thrift server hostname and port</description>
+  </property>
+-------------------- end edit ----------------------------------
+
+
+
+
+
+----
+####### spark-sql
+---------------------
+
+spark-sql --driver-class-path /usr/share/java/mysql-connector-java-8.0.33.jar
+
+
+########### submit error
+The not found exception for org.apache.commons.collections.CollectionUtils can be fixed by copying $SPARK_HOME/jars/commons-collections-3.2.2.jar to $HIVE_HOME/lib. spark-sql is work. Thanks very much! – 
+hclee
+May 24, 2021 at 3:38 
+
