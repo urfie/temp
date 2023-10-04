@@ -26,3 +26,10 @@ def main():
 if __name__ == '__main__':
     main()
     sys.exit()
+
+
+put in spark-env.sh
+
+export SPARK_LOCAL_IP="127.0.0.1"
+export HADOOP_CONF_DIR="$HADOOP_HOME/etc/hadoop"
+export YARN_CONF_DIR="$HADOOP_HOME/etc/hadoop"
