@@ -1,0 +1,2881 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\n#### Dalam latihan ini kita akan melakukan data cleansing dan transform menggunakan data credit card approval. \n#### Data diambil dari sini : `https://www.kaggle.com/datasets/rikdifos/credit-card-approval-prediction/data`\n\n#### Yang akan kita lakukan adalah sebagai berikut :\n\n*1. Load data*\n*2. Eksplorasi*\n*3. Menangani empty/NULL column : mengisi dengan nilai default*\n*4. Melakukan agregasi dan join data credit application dan data credit record yang sudah diagregasi*\n*5. Transformasi tanggal*\n\n#### Yang akan kita lakukan tentu bukan proses menghitung credit risk yang ideal, akan tetapi hanya untuk menunjukkan beberapa operasi yang biasa kita lakukan dalam data preprocessing, dilakukan dengan spark dan hive.",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:04:04+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Dalam latihan ini kita akan melakukan data cleansing dan transform menggunakan data credit card approval.</h4>\n<h4>Data diambil dari sini : <code>https://www.kaggle.com/datasets/rikdifos/credit-card-approval-prediction/data</code></h4>\n<h4>Yang akan kita lakukan adalah sebagai berikut :</h4>\n<p><em>1. Load data</em>\n<br  /><em>2. Eksplorasi</em>\n<br  /><em>3. Menangani empty/NULL column : mengisi dengan nilai default</em>\n<br  /><em>4. Melakukan agregasi dan join data credit application dan data credit record yang sudah diagregasi</em>\n<br  /><em>5. Transformasi tanggal</em></p>\n<h4>Yang akan kita lakukan tentu bukan proses menghitung credit risk yang ideal, akan tetapi hanya untuk menunjukkan beberapa operasi yang biasa kita lakukan dalam data preprocessing, dilakukan dengan spark dan hive.</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696658202298_2111499823",
+      "id": "paragraph_1696658202298_2111499823",
+      "dateCreated": "2023-10-07T12:56:42+0700",
+      "dateStarted": "2023-10-07T13:04:04+0700",
+      "dateFinished": "2023-10-07T13:04:04+0700",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:111933"
+    },
+    {
+      "text": "%spark.pyspark\nfrom pyspark.sql import SparkSession\nimport pyspark.sql.functions as f\nspark = SparkSession.builder.enableHiveSupport().getOrCreate()\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:28:40+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696658371572_195974398",
+      "id": "paragraph_1696658371572_195974398",
+      "dateCreated": "2023-10-07T12:59:31+0700",
+      "dateStarted": "2023-10-09T10:28:40+0700",
+      "dateFinished": "2023-10-09T10:29:53+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111934"
+    },
+    {
+      "text": "%md\n\n### Prepare Data\n\n#### Download Dataset\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:16:18+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h3>Prepare Data</h3>\n<h4>Download Dataset</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696658716122_1531187143",
+      "id": "paragraph_1696658716122_1531187143",
+      "dateCreated": "2023-10-07T13:05:16+0700",
+      "dateStarted": "2023-10-09T08:16:18+0700",
+      "dateFinished": "2023-10-09T08:16:18+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111935"
+    },
+    {
+      "text": "%sh\nwget  -P data https://github.com/urfie/SparkSQL-dengan-Hive/raw/main/datasets/application_record.csv.gz",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:30:14+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "--2023-10-09 10:30:18--  https://github.com/urfie/SparkSQL-dengan-Hive/raw/main/datasets/application_record.csv.gz\nResolving github.com (github.com)... 20.205.243.166\nConnecting to github.com (github.com)|20.205.243.166|:443... connected.\nHTTP request sent, awaiting response... 302 Found\nLocation: https://raw.githubusercontent.com/urfie/SparkSQL-dengan-Hive/main/datasets/application_record.csv.gz [following]\n--2023-10-09 10:30:19--  https://raw.githubusercontent.com/urfie/SparkSQL-dengan-Hive/main/datasets/application_record.csv.gz\nResolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.108.133, 185.199.109.133, ...\nConnecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.\nHTTP request sent, awaiting response... 200 OK\nLength: 3175168 (3.0M) [application/octet-stream]\nSaving to: ‘data/application_record.csv.gz’\n\n     0K .......... .......... .......... .......... ..........  1% 1.51M 2s\n    50K .......... .......... .......... .......... ..........  3% 5.99M 1s\n   100K .......... .......... .......... .......... ..........  4% 2.47M 1s\n   150K .......... .......... .......... .......... ..........  6% 6.68M 1s\n   200K .......... .......... .......... .......... ..........  8% 10.1M 1s\n   250K .......... .......... .......... .......... ..........  9% 2.62M 1s\n   300K .......... .......... .......... .......... .......... 11% 26.0M 1s\n   350K .......... .......... .......... .......... .......... 12% 11.8M 1s\n   400K .......... .......... .......... .......... .......... 14% 9.54M 1s\n   450K .......... .......... .......... .......... .......... 16% 45.7M 1s\n   500K .......... .......... .......... .......... .......... 17% 12.4M 0s\n   550K .......... .......... .......... .......... .......... 19% 31.3M 0s\n   600K .......... .......... .......... .......... .......... 20% 4.55M 0s\n   650K .......... .......... .......... .......... .......... 22% 13.3M 0s\n   700K .......... .......... .......... .......... .......... 24% 25.9M 0s\n   750K .......... .......... .......... .......... .......... 25% 14.3M 0s\n   800K .......... .......... .......... .......... .......... 27% 11.7M 0s\n   850K .......... .......... .......... .......... .......... 29% 15.1M 0s\n   900K .......... .......... .......... .......... .......... 30% 18.5M 0s\n   950K .......... .......... .......... .......... .......... 32%  128M 0s\n  1000K .......... .......... .......... .......... .......... 33%  120M 0s\n  1050K .......... .......... .......... .......... .......... 35% 56.2M 0s\n  1100K .......... .......... .......... .......... .......... 37% 27.2M 0s\n  1150K .......... .......... .......... .......... .......... 38%  185M 0s\n  1200K .......... .......... .......... .......... .......... 40%  178M 0s\n  1250K .......... .......... .......... .......... .......... 41% 10.3M 0s\n  1300K .......... .......... .......... .......... .......... 43% 14.7M 0s\n  1350K .......... .......... .......... .......... .......... 45% 15.4M 0s\n  1400K .......... .......... .......... .......... .......... 46% 3.83M 0s\n  1450K .......... .......... .......... .......... .......... 48% 21.8M 0s\n  1500K .......... .......... .......... .......... .......... 49% 24.1M 0s\n  1550K .......... .......... .......... .......... .......... 51% 23.4M 0s\n  1600K .......... .......... .......... .......... .......... 53% 8.10M 0s\n  1650K .......... .......... .......... .......... .......... 54% 14.2M 0s\n  1700K .......... .......... .......... .......... .......... 56% 38.0M 0s\n  1750K .......... .......... .......... .......... .......... 58% 65.1M 0s\n  1800K .......... .......... .......... .......... .......... 59% 54.4M 0s\n  1850K .......... .......... .......... .......... .......... 61% 57.2M 0s\n  1900K .......... .......... .......... .......... .......... 62% 33.5M 0s\n  1950K .......... .......... .......... .......... .......... 64% 8.87M 0s\n  2000K .......... .......... .......... .......... .......... 66%  103M 0s\n  2050K .......... .......... .......... .......... .......... 67%  129M 0s\n  2100K .......... .......... .......... .......... .......... 69% 7.01M 0s\n  2150K .......... .......... .......... .......... .......... 70%  131M 0s\n  2200K .......... .......... .......... .......... .......... 72%  206M 0s\n  2250K .......... .......... .......... .......... .......... 74%  199M 0s\n  2300K .......... .......... .......... .......... .......... 75%  257M 0s\n  2350K .......... .......... .......... .......... .......... 77%  243M 0s\n  2400K .......... .......... .......... .......... .......... 79%  200M 0s\n  2450K .......... .......... .......... .......... .......... 80%  185M 0s\n  2500K .......... .......... .......... .......... .......... 82%  261M 0s\n  2550K .......... .......... .......... .......... .......... 83%  252M 0s\n  2600K .......... .......... .......... .......... .......... 85%  262M 0s\n  2650K .......... .......... .......... .......... .......... 87%  176M 0s\n  2700K .......... .......... .......... .......... .......... 88%  225M 0s\n  2750K .......... .......... .......... .......... .......... 90% 11.6M 0s\n  2800K .......... .......... .......... .......... .......... 91% 14.3M 0s\n  2850K .......... .......... .......... .......... .......... 93% 90.1M 0s\n  2900K .......... .......... .......... .......... .......... 95%  254M 0s\n  2950K .......... .......... .......... .......... .......... 96% 42.7M 0s\n  3000K .......... .......... .......... .......... .......... 98% 64.3M 0s\n  3050K .......... .......... .......... .......... .......... 99%  298M 0s\n  3100K                                                       100% 1431G=0.2s\n\n2023-10-09 10:30:20 (14.2 MB/s) - ‘data/application_record.csv.gz’ saved [3175168/3175168]\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696658762823_28375928",
+      "id": "paragraph_1696658762823_28375928",
+      "dateCreated": "2023-10-07T13:06:02+0700",
+      "dateStarted": "2023-10-09T10:30:18+0700",
+      "dateFinished": "2023-10-09T10:30:20+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111936"
+    },
+    {
+      "text": "%sh\nwget -P data https://github.com/urfie/SparkSQL-dengan-Hive/raw/main/datasets/credit_record.csv.gz",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:30:23+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "--2023-10-09 10:30:24--  https://github.com/urfie/SparkSQL-dengan-Hive/raw/main/datasets/credit_record.csv.gz\nResolving github.com (github.com)... 20.205.243.166\nConnecting to github.com (github.com)|20.205.243.166|:443... connected.\nHTTP request sent, awaiting response... 302 Found\nLocation: https://raw.githubusercontent.com/urfie/SparkSQL-dengan-Hive/main/datasets/credit_record.csv.gz [following]\n--2023-10-09 10:30:25--  https://raw.githubusercontent.com/urfie/SparkSQL-dengan-Hive/main/datasets/credit_record.csv.gz\nResolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.111.133, 185.199.108.133, ...\nConnecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.\nHTTP request sent, awaiting response... 200 OK\nLength: 2684548 (2.6M) [application/octet-stream]\nSaving to: ‘data/credit_record.csv.gz’\n\n     0K .......... .......... .......... .......... ..........  1% 1.52M 2s\n    50K .......... .......... .......... .......... ..........  3% 5.36M 1s\n   100K .......... .......... .......... .......... ..........  5% 1.77M 1s\n   150K .......... .......... .......... .......... ..........  7% 3.77M 1s\n   200K .......... .......... .......... .......... ..........  9% 3.21M 1s\n   250K .......... .......... .......... .......... .......... 11% 4.66M 1s\n   300K .......... .......... .......... .......... .......... 13% 3.79M 1s\n   350K .......... .......... .......... .......... .......... 15% 4.02M 1s\n   400K .......... .......... .......... .......... .......... 17% 3.73M 1s\n   450K .......... .......... .......... .......... .......... 19% 5.18M 1s\n   500K .......... .......... .......... .......... .......... 20% 5.25M 1s\n   550K .......... .......... .......... .......... .......... 22% 3.72M 1s\n   600K .......... .......... .......... .......... .......... 24% 4.82M 1s\n   650K .......... .......... .......... .......... .......... 26% 3.95M 1s\n   700K .......... .......... .......... .......... .......... 28% 4.44M 1s\n   750K .......... .......... .......... .......... .......... 30% 4.24M 1s\n   800K .......... .......... .......... .......... .......... 32% 5.56M 0s\n   850K .......... .......... .......... .......... .......... 34% 4.64M 0s\n   900K .......... .......... .......... .......... .......... 36% 3.88M 0s\n   950K .......... .......... .......... .......... .......... 38% 6.57M 0s\n  1000K .......... .......... .......... .......... .......... 40% 6.47M 0s\n  1050K .......... .......... .......... .......... .......... 41% 3.89M 0s\n  1100K .......... .......... .......... .......... .......... 43% 4.66M 0s\n  1150K .......... .......... .......... .......... .......... 45% 6.42M 0s\n  1200K .......... .......... .......... .......... .......... 47% 3.64M 0s\n  1250K .......... .......... .......... .......... .......... 49% 6.85M 0s\n  1300K .......... .......... .......... .......... .......... 51% 6.50M 0s\n  1350K .......... .......... .......... .......... .......... 53% 6.07M 0s\n  1400K .......... .......... .......... .......... .......... 55% 4.47M 0s\n  1450K .......... .......... .......... .......... .......... 57% 1.91M 0s\n  1500K .......... .......... .......... .......... .......... 59% 28.1M 0s\n  1550K .......... .......... .......... .......... .......... 61% 22.0M 0s\n  1600K .......... .......... .......... .......... .......... 62% 7.18M 0s\n  1650K .......... .......... .......... .......... .......... 64% 2.36M 0s\n  1700K .......... .......... .......... .......... .......... 66% 7.49M 0s\n  1750K .......... .......... .......... .......... .......... 68% 5.29M 0s\n  1800K .......... .......... .......... .......... .......... 70% 6.89M 0s\n  1850K .......... .......... .......... .......... .......... 72% 6.23M 0s\n  1900K .......... .......... .......... .......... .......... 74% 7.38M 0s\n  1950K .......... .......... .......... .......... .......... 76% 7.85M 0s\n  2000K .......... .......... .......... .......... .......... 78% 7.88M 0s\n  2050K .......... .......... .......... .......... .......... 80% 5.01M 0s\n  2100K .......... .......... .......... .......... .......... 82% 7.78M 0s\n  2150K .......... .......... .......... .......... .......... 83% 8.16M 0s\n  2200K .......... .......... .......... .......... .......... 85% 8.23M 0s\n  2250K .......... .......... .......... .......... .......... 87% 4.06M 0s\n  2300K .......... .......... .......... .......... .......... 89% 32.8M 0s\n  2350K .......... .......... .......... .......... .......... 91% 8.80M 0s\n  2400K .......... .......... .......... .......... .......... 93% 6.87M 0s\n  2450K .......... .......... .......... .......... .......... 95% 3.72M 0s\n  2500K .......... .......... .......... .......... .......... 97% 8.85M 0s\n  2550K .......... .......... .......... .......... .......... 99% 10.5M 0s\n  2600K .......... .......... .                               100% 15.1M=0.5s\n\n2023-10-09 10:30:26 (4.81 MB/s) - ‘data/credit_record.csv.gz’ saved [2684548/2684548]\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696658805426_2088901518",
+      "id": "paragraph_1696658805426_2088901518",
+      "dateCreated": "2023-10-07T13:06:45+0700",
+      "dateStarted": "2023-10-09T10:30:24+0700",
+      "dateFinished": "2023-10-09T10:30:26+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111937"
+    },
+    {
+      "text": "%md\n#### Upload Data ke HDFS\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:21:03+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Upload Data ke HDFS</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696658882196_631202344",
+      "id": "paragraph_1696658882196_631202344",
+      "dateCreated": "2023-10-07T13:08:02+0700",
+      "dateStarted": "2023-10-07T13:21:03+0700",
+      "dateFinished": "2023-10-07T13:21:03+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111938"
+    },
+    {
+      "text": "%sh\nhdfs dfs -mkdir /user/userdev/cc_data",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:30:36+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/hadoop/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696658827794_15003580",
+      "id": "paragraph_1696658827794_15003580",
+      "dateCreated": "2023-10-07T13:07:07+0700",
+      "dateStarted": "2023-10-09T10:30:36+0700",
+      "dateFinished": "2023-10-09T10:30:39+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111939"
+    },
+    {
+      "text": "%sh\nhdfs dfs -mkdir /user/userdev/cc_data/credit",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:30:41+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/hadoop/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659069412_1674307988",
+      "id": "paragraph_1696659069412_1674307988",
+      "dateCreated": "2023-10-07T13:11:09+0700",
+      "dateStarted": "2023-10-09T10:30:42+0700",
+      "dateFinished": "2023-10-09T10:30:45+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111940"
+    },
+    {
+      "text": "%sh\nhdfs dfs -put data/credit_record.csv.gz /user/userdev/cc_data/credit",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:30:48+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/hadoop/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659109005_697627238",
+      "id": "paragraph_1696659109005_697627238",
+      "dateCreated": "2023-10-07T13:11:49+0700",
+      "dateStarted": "2023-10-09T10:30:48+0700",
+      "dateFinished": "2023-10-09T10:30:52+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111941"
+    },
+    {
+      "text": "%sh\nhdfs dfs -ls /user/userdev/cc_data/credit",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:30:55+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/hadoop/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]\nFound 1 items\n-rw-r--r--   3 userdev hdfs    2684548 2023-10-09 10:30 /user/userdev/cc_data/credit/credit_record.csv.gz\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659134773_1431795128",
+      "id": "paragraph_1696659134773_1431795128",
+      "dateCreated": "2023-10-07T13:12:14+0700",
+      "dateStarted": "2023-10-09T10:30:55+0700",
+      "dateFinished": "2023-10-09T10:30:58+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111942"
+    },
+    {
+      "text": "%sh\nhdfs dfs -mkdir /user/userdev/cc_data/app",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:30:59+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/hadoop/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659166384_1419331865",
+      "id": "paragraph_1696659166384_1419331865",
+      "dateCreated": "2023-10-07T13:12:46+0700",
+      "dateStarted": "2023-10-09T10:31:00+0700",
+      "dateFinished": "2023-10-09T10:31:03+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111943"
+    },
+    {
+      "text": "%sh\nhdfs dfs -put data/application_record.csv.gz /user/userdev/cc_data/app",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:31:04+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/hadoop/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659197169_406531698",
+      "id": "paragraph_1696659197169_406531698",
+      "dateCreated": "2023-10-07T13:13:17+0700",
+      "dateStarted": "2023-10-09T10:31:04+0700",
+      "dateFinished": "2023-10-09T10:31:08+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111944"
+    },
+    {
+      "text": "%sh\nhdfs dfs -ls /user/userdev/cc_data/app",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:31:11+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/hadoop/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]\nFound 1 items\n-rw-r--r--   3 userdev hdfs    3175168 2023-10-09 10:31 /user/userdev/cc_data/app/application_record.csv.gz\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659253600_24586648",
+      "id": "paragraph_1696659253600_24586648",
+      "dateCreated": "2023-10-07T13:14:13+0700",
+      "dateStarted": "2023-10-09T10:31:11+0700",
+      "dateFinished": "2023-10-09T10:31:14+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111945"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"CREATE DATABASE user0;\")\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:31:16+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Hive Session ID = f10e82e9-e7d7-451e-a3f8-92e2876dbaa3\nDataFrame[]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659264100_1018361771",
+      "id": "paragraph_1696659264100_1018361771",
+      "dateCreated": "2023-10-07T13:14:24+0700",
+      "dateStarted": "2023-10-09T10:31:16+0700",
+      "dateFinished": "2023-10-09T10:31:20+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111946"
+    },
+    {
+      "text": "%md\n#### Create External table\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:21:11+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Create External table</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659633210_636938463",
+      "id": "paragraph_1696659633210_636938463",
+      "dateCreated": "2023-10-07T13:20:33+0700",
+      "dateStarted": "2023-10-07T13:21:11+0700",
+      "dateFinished": "2023-10-07T13:21:11+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111947"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"\"\"CREATE EXTERNAL TABLE user0.credit_ext(\nid STRING,\nmonths_balance BIGINT,\nstatus STRING)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION 'hdfs://myzoo/user/userdev/cc_data/credit'\n\"\"\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:31:33+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "DataFrame[]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696658701975_733065734",
+      "id": "paragraph_1696658701975_733065734",
+      "dateCreated": "2023-10-07T13:05:01+0700",
+      "dateStarted": "2023-10-09T10:31:34+0700",
+      "dateFinished": "2023-10-09T10:31:34+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111948"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select * from user0.credit_ext limit 10\").show(truncate=False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:31:39+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+-------+--------------+------+\n|id     |months_balance|status|\n+-------+--------------+------+\n|5001711|0             |X     |\n|5001711|-1            |0     |\n|5001711|-2            |0     |\n|5001711|-3            |0     |\n|5001712|0             |C     |\n|5001712|-1            |C     |\n|5001712|-2            |C     |\n|5001712|-3            |C     |\n|5001712|-4            |C     |\n|5001712|-5            |C     |\n+-------+--------------+------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=0",
+              "$$hashKey": "object:114514"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659243352_1535302779",
+      "id": "paragraph_1696659243352_1535302779",
+      "dateCreated": "2023-10-07T13:14:03+0700",
+      "dateStarted": "2023-10-09T10:31:39+0700",
+      "dateFinished": "2023-10-09T10:31:46+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111949"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"\"\"\nCREATE EXTERNAL TABLE user0.app_ext(\nid\tSTRING,\ncode_gender\tSTRING,\nflag_own_car\tSTRING,\nflag_own_realty\tSTRING,\ncnt_children\tSTRING,\namt_income_total\tSTRING,\nname_income_type\tSTRING,\nname_education_type\tSTRING,\nname_family_status\tSTRING,\nname_housing_type\tSTRING,\ndays_birth\tINT,\ndays_employed\tINT,\nflag_mobil\tINT,\nflag_work_phone\tINT,\nflag_phone\tINT,\nflag_email\tINT,\noccupation_type\tSTRING,\ncnt_fam_members\tINT)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION 'hdfs://myzoo/user/userdev/cc_data/app'\n\"\"\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:31:51+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "DataFrame[]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659446131_93422504",
+      "id": "paragraph_1696659446131_93422504",
+      "dateCreated": "2023-10-07T13:17:26+0700",
+      "dateStarted": "2023-10-09T10:31:52+0700",
+      "dateFinished": "2023-10-09T10:31:52+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111950"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select * from user0.app_ext limit 5\").show(truncate=False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:31:56+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+-------+-----------+------------+---------------+------------+----------------+--------------------+-----------------------------+--------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+\n|id     |code_gender|flag_own_car|flag_own_realty|cnt_children|amt_income_total|name_income_type    |name_education_type          |name_family_status  |name_housing_type|days_birth|days_employed|flag_mobil|flag_work_phone|flag_phone|flag_email|occupation_type|cnt_fam_members|\n+-------+-----------+------------+---------------+------------+----------------+--------------------+-----------------------------+--------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+\n|5008804|M          |Y           |Y              |0           |427500.0        |Working             |Higher education             |Civil marriage      |Rented apartment |-12005    |-4542        |1         |1              |0         |0         |               |2              |\n|5008805|M          |Y           |Y              |0           |427500.0        |Working             |Higher education             |Civil marriage      |Rented apartment |-12005    |-4542        |1         |1              |0         |0         |               |2              |\n|5008806|M          |Y           |Y              |0           |112500.0        |Working             |Secondary / secondary special|Married             |House / apartment|-21474    |-1134        |1         |0              |0         |0         |Security staff |2              |\n|5008808|F          |N           |Y              |0           |270000.0        |Commercial associate|Secondary / secondary special|Single / not married|House / apartment|-19110    |-3051        |1         |0              |1         |1         |Sales staff    |1              |\n|5008809|F          |N           |Y              |0           |270000.0        |Commercial associate|Secondary / secondary special|Single / not married|House / apartment|-19110    |-3051        |1         |0              |1         |1         |Sales staff    |1              |\n+-------+-----------+------------+---------------+------------+----------------+--------------------+-----------------------------+--------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=1",
+              "$$hashKey": "object:114624"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659499273_1108346709",
+      "id": "paragraph_1696659499273_1108346709",
+      "dateCreated": "2023-10-07T13:18:19+0700",
+      "dateStarted": "2023-10-09T10:31:56+0700",
+      "dateFinished": "2023-10-09T10:31:57+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111951"
+    },
+    {
+      "text": "%md\n#### Create Managed Table\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:25:14+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Create Managed Table</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659895761_1024040942",
+      "id": "paragraph_1696659895761_1024040942",
+      "dateCreated": "2023-10-07T13:24:55+0700",
+      "dateStarted": "2023-10-07T13:25:14+0700",
+      "dateFinished": "2023-10-07T13:25:14+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111952"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"\"\"CREATE TABLE user0.credit(\nid STRING,\nmonths_balance BIGINT,\nstatus STRING)\nSTORED AS ORC;\n\"\"\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:32:19+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "DataFrame[]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659842416_1430745226",
+      "id": "paragraph_1696659842416_1430745226",
+      "dateCreated": "2023-10-07T13:24:02+0700",
+      "dateStarted": "2023-10-09T10:32:20+0700",
+      "dateFinished": "2023-10-09T10:32:20+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111953"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"insert into user0.credit select * from user0.credit_ext\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:32:24+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "DataFrame[]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=2",
+              "$$hashKey": "object:114780"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659518785_516073398",
+      "id": "paragraph_1696659518785_516073398",
+      "dateCreated": "2023-10-07T13:18:38+0700",
+      "dateStarted": "2023-10-09T10:32:24+0700",
+      "dateFinished": "2023-10-09T10:32:30+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111954"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"\"\"\nCREATE TABLE user0.app(\nid\tSTRING,\ncode_gender\tSTRING,\nflag_own_car\tSTRING,\nflag_own_realty\tSTRING,\ncnt_children\tSTRING,\namt_income_total\tSTRING,\nname_income_type\tSTRING,\nname_education_type\tSTRING,\nname_family_status\tSTRING,\nname_housing_type\tSTRING,\ndays_birth\tINT,\ndays_employed\tINT,\nflag_mobil\tINT,\nflag_work_phone\tINT,\nflag_phone\tINT,\nflag_email\tINT,\noccupation_type\tSTRING,\ncnt_fam_members\tINT)\nSTORED AS ORC;\n\"\"\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:32:34+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "DataFrame[]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659611206_1908268606",
+      "id": "paragraph_1696659611206_1908268606",
+      "dateCreated": "2023-10-07T13:20:11+0700",
+      "dateStarted": "2023-10-09T10:32:34+0700",
+      "dateFinished": "2023-10-09T10:32:35+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111955"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"insert into user0.app select * from user0.app_ext\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:32:38+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "DataFrame[]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=3",
+              "$$hashKey": "object:114890"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696659981751_1931046079",
+      "id": "paragraph_1696659981751_1931046079",
+      "dateCreated": "2023-10-07T13:26:21+0700",
+      "dateStarted": "2023-10-09T10:32:39+0700",
+      "dateFinished": "2023-10-09T10:32:48+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111956"
+    },
+    {
+      "text": "%md\n\n### Clean Data\n\n#### Explorasi Data",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:39:06+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h3>Clean Data</h3>\n<h4>Explorasi Data</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660719015_1342025800",
+      "id": "paragraph_1696660719015_1342025800",
+      "dateCreated": "2023-10-07T13:38:39+0700",
+      "dateStarted": "2023-10-07T13:39:06+0700",
+      "dateFinished": "2023-10-07T13:39:06+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111957"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select distinct status from user0.credit_ext\").show()",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:32:55+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+------+\n|status|\n+------+\n|     3|\n|     0|\n|     5|\n|     C|\n|     X|\n|     1|\n|     4|\n|     2|\n+------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=4",
+              "$$hashKey": "object:114994"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=5",
+              "$$hashKey": "object:114995"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=6",
+              "$$hashKey": "object:114996"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=7",
+              "$$hashKey": "object:114997"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=8",
+              "$$hashKey": "object:114998"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660132797_1919625140",
+      "id": "paragraph_1696660132797_1919625140",
+      "dateCreated": "2023-10-07T13:28:52+0700",
+      "dateStarted": "2023-10-09T10:32:56+0700",
+      "dateFinished": "2023-10-09T10:33:01+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111958"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select distinct name_education_type from user0.app_ext\").show(truncate = False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:27:50+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+-----------------------------+\n|name_education_type          |\n+-----------------------------+\n|Academic degree              |\n|Incomplete higher            |\n|Secondary / secondary special|\n|Lower secondary              |\n|Higher education             |\n+-----------------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=15",
+              "$$hashKey": "object:115072"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=16",
+              "$$hashKey": "object:115073"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=17",
+              "$$hashKey": "object:115074"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=18",
+              "$$hashKey": "object:115075"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=19",
+              "$$hashKey": "object:115076"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660787246_1045107856",
+      "id": "paragraph_1696660787246_1045107856",
+      "dateCreated": "2023-10-07T13:39:47+0700",
+      "dateStarted": "2023-10-09T08:27:50+0700",
+      "dateFinished": "2023-10-09T08:27:53+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111959"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select distinct code_gender from user0.app_ext\").show(truncate = False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:27:57+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+-----------+\n|code_gender|\n+-----------+\n|F          |\n|M          |\n+-----------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=20",
+              "$$hashKey": "object:115150"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=21",
+              "$$hashKey": "object:115151"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=22",
+              "$$hashKey": "object:115152"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=23",
+              "$$hashKey": "object:115153"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=24",
+              "$$hashKey": "object:115154"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660800203_440527314",
+      "id": "paragraph_1696660800203_440527314",
+      "dateCreated": "2023-10-07T13:40:00+0700",
+      "dateStarted": "2023-10-09T08:27:58+0700",
+      "dateFinished": "2023-10-09T08:28:01+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111960"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select distinct name_family_status from user0.app_ext\").show(truncate = False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:40:31+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+--------------------+\n|name_family_status  |\n+--------------------+\n|Separated           |\n|Married             |\n|Single / not married|\n|Widow               |\n|Civil marriage      |\n+--------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:39926/jobs/job?id=50",
+              "$$hashKey": "object:115228"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:39926/jobs/job?id=51",
+              "$$hashKey": "object:115229"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:39926/jobs/job?id=52",
+              "$$hashKey": "object:115230"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:39926/jobs/job?id=53",
+              "$$hashKey": "object:115231"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:39926/jobs/job?id=54",
+              "$$hashKey": "object:115232"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660812927_927064795",
+      "id": "paragraph_1696660812927_927064795",
+      "dateCreated": "2023-10-07T13:40:12+0700",
+      "dateStarted": "2023-10-07T13:40:31+0700",
+      "dateFinished": "2023-10-07T13:40:34+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111961"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select distinct name_housing_type from user0.app_ext\").show(truncate = False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:28:16+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+-------------------+\n|name_housing_type  |\n+-------------------+\n|House / apartment  |\n|Municipal apartment|\n|Co-op apartment    |\n|Rented apartment   |\n|Office apartment   |\n|With parents       |\n+-------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=25",
+              "$$hashKey": "object:115306"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=26",
+              "$$hashKey": "object:115307"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=27",
+              "$$hashKey": "object:115308"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=28",
+              "$$hashKey": "object:115309"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=29",
+              "$$hashKey": "object:115310"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660831739_350734385",
+      "id": "paragraph_1696660831739_350734385",
+      "dateCreated": "2023-10-07T13:40:31+0700",
+      "dateStarted": "2023-10-09T08:28:17+0700",
+      "dateFinished": "2023-10-09T08:28:20+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111962"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select distinct occupation_type from user0.app_ext\").show(truncate = False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:33:26+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+---------------------+\n|occupation_type      |\n+---------------------+\n|Managers             |\n|HR staff             |\n|Medicine staff       |\n|Accountants          |\n|Laborers             |\n|Cleaning staff       |\n|Private service staff|\n|Drivers              |\n|Sales staff          |\n|Realty agents        |\n|IT staff             |\n|Security staff       |\n|Secretaries          |\n|Low-skill Laborers   |\n|                     |\n|Core staff           |\n|Cooking staff        |\n|High skill tech staff|\n|Waiters/barmen staff |\n+---------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=9",
+              "$$hashKey": "object:115384"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=10",
+              "$$hashKey": "object:115385"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=11",
+              "$$hashKey": "object:115386"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=12",
+              "$$hashKey": "object:115387"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=13",
+              "$$hashKey": "object:115388"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660767998_443786804",
+      "id": "paragraph_1696660767998_443786804",
+      "dateCreated": "2023-10-07T13:39:27+0700",
+      "dateStarted": "2023-10-09T10:33:27+0700",
+      "dateFinished": "2023-10-09T10:33:31+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111963"
+    },
+    {
+      "text": "%md\n##### Dari hasil di atas terlihat bahwa kolom `occupation_type` memiliki record dengan nilai kosong (empty string). Note : Dalam hal ini Hive menyimpan kolom kosong sebagai *empty string*, bukan *NULL*\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:45:20+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h5>Dari hasil di atas terlihat bahwa kolom <code>occupation_type</code> memiliki record dengan nilai kosong (empty string). Note : Dalam hal ini Hive menyimpan kolom kosong sebagai <em>empty string</em>, bukan <em>NULL</em></h5>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660873312_986489443",
+      "id": "paragraph_1696660873312_986489443",
+      "dateCreated": "2023-10-07T13:41:13+0700",
+      "dateStarted": "2023-10-07T13:45:20+0700",
+      "dateFinished": "2023-10-07T13:45:20+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111964"
+    },
+    {
+      "text": "%md\n#### Load Data ke DataFrame",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:43:37+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Load Data ke DataFrame</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660967155_1480450180",
+      "id": "paragraph_1696660967155_1480450180",
+      "dateCreated": "2023-10-07T13:42:47+0700",
+      "dateStarted": "2023-10-07T13:43:37+0700",
+      "dateFinished": "2023-10-07T13:43:37+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111965"
+    },
+    {
+      "text": "%spark.pyspark\ndfApp = spark.sql(\"select * from user0.app_ext\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:33:35+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696660844552_1027140023",
+      "id": "paragraph_1696660844552_1027140023",
+      "dateCreated": "2023-10-07T13:40:44+0700",
+      "dateStarted": "2023-10-09T10:33:36+0700",
+      "dateFinished": "2023-10-09T10:33:36+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111966"
+    },
+    {
+      "text": "%md\n#### Drop Duplicate Row\n\n##### Membersihkan data duplikat, yaitu record dengan id yang sama\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-07T13:45:06+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Drop Duplicate Row</h4>\n<h5>Membersihkan data duplikat, yaitu record dengan id yang sama</h5>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661038513_1173352708",
+      "id": "paragraph_1696661038513_1173352708",
+      "dateCreated": "2023-10-07T13:43:58+0700",
+      "dateStarted": "2023-10-07T13:45:06+0700",
+      "dateFinished": "2023-10-07T13:45:06+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111967"
+    },
+    {
+      "text": "%spark.pyspark\ndfApp.count()",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:33:41+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "438557\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=14",
+              "$$hashKey": "object:115642"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661029057_1086790981",
+      "id": "paragraph_1696661029057_1086790981",
+      "dateCreated": "2023-10-07T13:43:49+0700",
+      "dateStarted": "2023-10-09T10:33:41+0700",
+      "dateFinished": "2023-10-09T10:33:42+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111968"
+    },
+    {
+      "text": "%spark.pyspark\ndfNodup = dfApp.drop_duplicates([\"id\"])",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:33:45+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661133062_1710674426",
+      "id": "paragraph_1696661133062_1710674426",
+      "dateCreated": "2023-10-07T13:45:33+0700",
+      "dateStarted": "2023-10-09T10:33:45+0700",
+      "dateFinished": "2023-10-09T10:33:45+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111969"
+    },
+    {
+      "text": "%spark.pyspark\ndfNodup.count()",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:33:50+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "438510\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=15",
+              "$$hashKey": "object:115742"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661147961_1184476100",
+      "id": "paragraph_1696661147961_1184476100",
+      "dateCreated": "2023-10-07T13:45:47+0700",
+      "dateStarted": "2023-10-09T10:33:50+0700",
+      "dateFinished": "2023-10-09T10:33:58+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111970"
+    },
+    {
+      "text": "%md\n#### Mengisi Nilai Default\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:19:01+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true,
+        "editorHide": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Mengisi Nilai Default</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661185538_1191171207",
+      "id": "paragraph_1696661185538_1191171207",
+      "dateCreated": "2023-10-07T13:46:25+0700",
+      "dateStarted": "2023-10-09T08:19:01+0700",
+      "dateFinished": "2023-10-09T08:19:01+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111971"
+    },
+    {
+      "text": "%spark.pyspark\ndfClean = dfNodup.withColumn('occupation_type', \\\n                              f.when(f.trim(dfNodup['occupation_type']) == '', 'Other') \\\n                              .otherwise(dfNodup['occupation_type']))",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:34:07+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661156602_2142409877",
+      "id": "paragraph_1696661156602_2142409877",
+      "dateCreated": "2023-10-07T13:45:56+0700",
+      "dateStarted": "2023-10-09T10:34:08+0700",
+      "dateFinished": "2023-10-09T10:34:09+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111972"
+    },
+    {
+      "text": "%spark.pyspark\ndfClean.select('occupation_type').distinct().show(truncate=False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:34:11+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+---------------------+\n|occupation_type      |\n+---------------------+\n|Managers             |\n|HR staff             |\n|Medicine staff       |\n|Accountants          |\n|Laborers             |\n|Other                |\n|Cleaning staff       |\n|Private service staff|\n|Drivers              |\n|Sales staff          |\n|Realty agents        |\n|IT staff             |\n|Security staff       |\n|Secretaries          |\n|Low-skill Laborers   |\n|Core staff           |\n|Cooking staff        |\n|High skill tech staff|\n|Waiters/barmen staff |\n+---------------------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=16",
+              "$$hashKey": "object:115888"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=17",
+              "$$hashKey": "object:115889"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=18",
+              "$$hashKey": "object:115890"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=19",
+              "$$hashKey": "object:115891"
+            },
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=20",
+              "$$hashKey": "object:115892"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661220574_449483842",
+      "id": "paragraph_1696661220574_449483842",
+      "dateCreated": "2023-10-07T13:47:00+0700",
+      "dateStarted": "2023-10-09T10:34:12+0700",
+      "dateFinished": "2023-10-09T10:34:22+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111973"
+    },
+    {
+      "text": "%md\n#### Reformat tanggal lahir\n##### Kita akan menghitung tanggal lahir dengan rumus : `tanggal saat ini - days_birth`\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:32:47+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Reformat tanggal lahir</h4>\n<h5>Kita akan menghitung tanggal lahir dengan rumus : <code>tanggal saat ini - days_birth</code></h5>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661258592_61060559",
+      "id": "paragraph_1696661258592_61060559",
+      "dateCreated": "2023-10-07T13:47:38+0700",
+      "dateStarted": "2023-10-09T08:32:47+0700",
+      "dateFinished": "2023-10-09T08:32:47+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111974"
+    },
+    {
+      "text": "%spark.pyspark\ndfClean = dfClean.withColumn('dob', f.expr(\"date_add(current_date(), days_birth)\"))",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:34:42+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661231597_1423018480",
+      "id": "paragraph_1696661231597_1423018480",
+      "dateCreated": "2023-10-07T13:47:11+0700",
+      "dateStarted": "2023-10-09T10:34:42+0700",
+      "dateFinished": "2023-10-09T10:34:42+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111975"
+    },
+    {
+      "text": "%spark.pyspark\ndfClean.show()",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:34:47+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+-------+-----------+------------+---------------+------------+----------------+--------------------+--------------------+--------------------+-------------------+----------+-------------+----------+---------------+----------+----------+--------------------+---------------+----------+\n|     id|code_gender|flag_own_car|flag_own_realty|cnt_children|amt_income_total|    name_income_type| name_education_type|  name_family_status|  name_housing_type|days_birth|days_employed|flag_mobil|flag_work_phone|flag_phone|flag_email|     occupation_type|cnt_fam_members|       dob|\n+-------+-----------+------------+---------------+------------+----------------+--------------------+--------------------+--------------------+-------------------+----------+-------------+----------+---------------+----------+----------+--------------------+---------------+----------+\n|5009208|          F|           N|              N|           0|        292500.0|       State servant|Secondary / secon...|             Married|  House / apartment|    -20953|        -8684|         1|              1|         1|         0|         Accountants|              2|1966-05-28|\n|5009410|          M|           N|              N|           0|        234000.0|             Working|   Incomplete higher|             Married|  House / apartment|    -13923|        -2290|         1|              1|         1|         0|             Drivers|              2|1985-08-26|\n|5009607|          F|           N|              N|           2|        144000.0|             Working|Secondary / secon...|             Married|  House / apartment|    -12277|         -982|         1|              1|         1|         0|High skill tech s...|              4|1990-02-27|\n|5011031|          F|           N|              Y|           1|        135000.0|             Working|     Academic degree|      Civil marriage|  House / apartment|    -17489|        -7557|         1|              0|         1|         0|               Other|              3|1975-11-21|\n|5018423|          F|           N|              Y|           0|        202500.0|Commercial associate|Secondary / secon...|             Married|Municipal apartment|    -18817|        -1094|         1|              0|         0|         0|            Laborers|              2|1972-04-02|\n|5021831|          F|           N|              Y|           0|        166500.0|             Working|   Incomplete higher|             Married|  House / apartment|    -13156|        -1917|         1|              0|         0|         0|            Laborers|              2|1987-10-02|\n|5021905|          M|           Y|              Y|           0|        225000.0|             Working|Secondary / secon...|             Married|  House / apartment|    -10328|        -1156|         1|              0|         0|         0|            Laborers|              2|1995-06-30|\n|5022348|          F|           N|              Y|           1|        234000.0|             Working|Secondary / secon...|Single / not married|  House / apartment|    -20693|        -8036|         1|              0|         0|         0|          Core staff|              2|1967-02-12|\n|5022382|          F|           N|              Y|           0|        225000.0|Commercial associate|    Higher education|               Widow|  House / apartment|    -21594|       -11693|         1|              1|         1|         0|            Laborers|              1|1964-08-25|\n|5023008|          F|           N|              N|           0|        157500.0|             Working|Secondary / secon...|             Married|  House / apartment|    -13779|        -1878|         1|              0|         0|         0|         Sales staff|              2|1986-01-17|\n|5023469|          F|           Y|              Y|           0|        315000.0|           Pensioner|Secondary / secon...|Single / not married|  House / apartment|    -21012|       365243|         1|              0|         0|         0|               Other|              1|1966-03-30|\n|5023549|          M|           Y|              Y|           0|         90900.0|             Working|Secondary / secon...|             Married|  House / apartment|    -21700|        -2426|         1|              0|         0|         0|            Laborers|              2|1964-05-11|\n|5024053|          F|           N|              Y|           1|        108000.0|             Working|Secondary / secon...|             Married|  House / apartment|    -13012|        -1342|         1|              0|         1|         0|         Sales staff|              3|1988-02-23|\n|5024141|          F|           Y|              N|           0|        180000.0|             Working|    Higher education|             Married|       With parents|    -11380|        -1007|         1|              1|         1|         0|         Accountants|              2|1992-08-12|\n|5024599|          F|           N|              Y|           0|        630000.0|           Pensioner|Secondary / secon...|Single / not married|  House / apartment|    -21982|       365243|         1|              0|         1|         0|               Other|              1|1963-08-03|\n|5025097|          F|           N|              Y|           0|        315000.0|             Working|Secondary / secon...|           Separated|  House / apartment|    -13375|         -793|         1|              0|         0|         0|       Cooking staff|              1|1987-02-25|\n|5025239|          F|           N|              Y|           0|         67500.0|             Working|Secondary / secon...|             Married|  House / apartment|    -17587|        -3411|         1|              0|         0|         0|      Cleaning staff|              2|1975-08-15|\n|5025948|          F|           N|              Y|           0|        130500.0|             Working|Secondary / secon...|             Married|  House / apartment|    -13520|        -5488|         1|              0|         0|         0|          Core staff|              2|1986-10-03|\n|5026179|          M|           Y|              Y|           0|        135000.0|             Working|Secondary / secon...|             Married|  House / apartment|    -19171|        -7804|         1|              1|         0|         0|            Laborers|              2|1971-04-14|\n|5026181|          M|           Y|              Y|           0|        135000.0|             Working|Secondary / secon...|             Married|  House / apartment|    -19171|        -7804|         1|              1|         0|         0|            Laborers|              2|1971-04-14|\n+-------+-----------+------------+---------------+------------+----------------+--------------------+--------------------+--------------------+-------------------+----------+-------------+----------+---------------+----------+----------+--------------------+---------------+----------+\nonly showing top 20 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=21",
+              "$$hashKey": "object:116054"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696661295539_1963886458",
+      "id": "paragraph_1696661295539_1963886458",
+      "dateCreated": "2023-10-07T13:48:15+0700",
+      "dateStarted": "2023-10-09T10:34:47+0700",
+      "dateFinished": "2023-10-09T10:34:53+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111976"
+    },
+    {
+      "text": "%md\n#### Reformat status kredit\n\nBerdasar deskripsi dataset, status kredit terdiri dari C, X, dan integer 0-5, dengan arti :\n\n- 0: 1-29 days past due\n- 1: 30-59 days past due\n- 2: 60-89 days overdue\n- 3: 90-119 days overdue\n- 4: 120-149 days overdue\n- 5: Overdue or bad debts, write-offs for more than 150 days\n- C: paid off that month\n- X: No loan for the month\n- Kita akan mengelompokkan jenis kredit menjadi 2, yaitu\n\n0 (Good Credit): X, C, dan 0\n1 (Bad Credit): 2 sampai 5\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:33:49+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Reformat status kredit</h4>\n<p>Berdasar deskripsi dataset, status kredit terdiri dari C, X, dan integer 0-5, dengan arti :</p>\n<ul>\n<li>0: 1-29 days past due</li>\n<li>1: 30-59 days past due</li>\n<li>2: 60-89 days overdue</li>\n<li>3: 90-119 days overdue</li>\n<li>4: 120-149 days overdue</li>\n<li>5: Overdue or bad debts, write-offs for more than 150 days</li>\n<li>C: paid off that month</li>\n<li>X: No loan for the month</li>\n<li>Kita akan mengelompokkan jenis kredit menjadi 2, yaitu</li>\n</ul>\n<p>0 (Good Credit): X, C, dan 0\n<br  />1 (Bad Credit): 2 sampai 5</p>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815154856_721705572",
+      "id": "paragraph_1696815154856_721705572",
+      "dateCreated": "2023-10-09T08:32:34+0700",
+      "dateStarted": "2023-10-09T08:33:49+0700",
+      "dateFinished": "2023-10-09T08:33:49+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111977"
+    },
+    {
+      "text": "%spark.pyspark\ndfCredit = spark.sql(\"select * from user0.credit\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:34:57+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815017603_1557632101",
+      "id": "paragraph_1696815017603_1557632101",
+      "dateCreated": "2023-10-09T08:30:17+0700",
+      "dateStarted": "2023-10-09T10:34:57+0700",
+      "dateFinished": "2023-10-09T10:34:57+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111978"
+    },
+    {
+      "text": "%spark.pyspark\ndfCredit = dfCredit.withColumn('status_new', \\\n                              f.when(dfCredit.status.isin(['X','C',0]), 0) \\\n                              .otherwise(1))\n                              \ndfAggregated = dfCredit.groupBy(\"id\").agg(f.sum(\"status_new\").alias(\"risk\"))",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:35:02+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815255402_767921587",
+      "id": "paragraph_1696815255402_767921587",
+      "dateCreated": "2023-10-09T08:34:15+0700",
+      "dateStarted": "2023-10-09T10:35:02+0700",
+      "dateFinished": "2023-10-09T10:35:02+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111979"
+    },
+    {
+      "text": "%md\n#### Join dengan data aplikasi\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:35:05+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Join dengan data aplikasi</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815291388_220994032",
+      "id": "paragraph_1696815291388_220994032",
+      "dateCreated": "2023-10-09T08:34:51+0700",
+      "dateStarted": "2023-10-09T10:35:05+0700",
+      "dateFinished": "2023-10-09T10:35:05+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111980"
+    },
+    {
+      "text": "%spark.pyspark\ndfApp_joined = dfClean.join(dfAggregated,dfClean.id==dfAggregated.id, \"left\").select(dfClean[\"*\"],dfAggregated[\"risk\"])\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:35:09+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815283947_1354545614",
+      "id": "paragraph_1696815283947_1354545614",
+      "dateCreated": "2023-10-09T08:34:43+0700",
+      "dateStarted": "2023-10-09T10:35:09+0700",
+      "dateFinished": "2023-10-09T10:35:09+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111981"
+    },
+    {
+      "text": "%md\n#### Save ke tabel\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:36:36+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h4>Save ke tabel</h4>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815377758_918268838",
+      "id": "paragraph_1696815377758_918268838",
+      "dateCreated": "2023-10-09T08:36:17+0700",
+      "dateStarted": "2023-10-09T08:36:36+0700",
+      "dateFinished": "2023-10-09T08:36:36+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111982"
+    },
+    {
+      "text": "%spark.pyspark\ndfApp_joined.write.saveAsTable(name=\"user0.app_risk_1\", mode=\"overwrite\",format=\"orc\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:35:13+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=23",
+              "$$hashKey": "object:116366"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815369713_1894059301",
+      "id": "paragraph_1696815369713_1894059301",
+      "dateCreated": "2023-10-09T08:36:09+0700",
+      "dateStarted": "2023-10-09T10:35:13+0700",
+      "dateFinished": "2023-10-09T10:36:46+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111983"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"describe extended user0.app_risk_1\").show(100, truncate = False)",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:39:57+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+----------------------------+-----------------------------------------------------+-------+\n|col_name                    |data_type                                            |comment|\n+----------------------------+-----------------------------------------------------+-------+\n|id                          |string                                               |null   |\n|code_gender                 |string                                               |null   |\n|flag_own_car                |string                                               |null   |\n|flag_own_realty             |string                                               |null   |\n|cnt_children                |string                                               |null   |\n|amt_income_total            |string                                               |null   |\n|name_income_type            |string                                               |null   |\n|name_education_type         |string                                               |null   |\n|name_family_status          |string                                               |null   |\n|name_housing_type           |string                                               |null   |\n|days_birth                  |int                                                  |null   |\n|days_employed               |int                                                  |null   |\n|flag_mobil                  |int                                                  |null   |\n|flag_work_phone             |int                                                  |null   |\n|flag_phone                  |int                                                  |null   |\n|flag_email                  |int                                                  |null   |\n|occupation_type             |string                                               |null   |\n|cnt_fam_members             |int                                                  |null   |\n|dob                         |date                                                 |null   |\n|risk                        |bigint                                               |null   |\n|                            |                                                     |       |\n|# Detailed Table Information|                                                     |       |\n|Database                    |user0                                                |       |\n|Table                       |app_risk_1                                           |       |\n|Owner                       |userdev                                              |       |\n|Created Time                |Mon Oct 09 08:38:44 WIB 2023                         |       |\n|Last Access                 |UNKNOWN                                              |       |\n|Created By                  |Spark 3.0.2                                          |       |\n|Type                        |MANAGED                                              |       |\n|Provider                    |orc                                                  |       |\n|Table Properties            |[transactional=true, bucketing_version=2]            |       |\n|Statistics                  |9249014 bytes                                        |       |\n|Location                    |hdfs://myzoo/apps/spark/warehouse/user0.db/app_risk_1|       |\n|Serde Library               |org.apache.hadoop.hive.ql.io.orc.OrcSerde            |       |\n|InputFormat                 |org.apache.hadoop.hive.ql.io.orc.OrcInputFormat      |       |\n|OutputFormat                |org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat     |       |\n+----------------------------+-----------------------------------------------------+-------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815415022_387026894",
+      "id": "paragraph_1696815415022_387026894",
+      "dateCreated": "2023-10-09T08:36:55+0700",
+      "dateStarted": "2023-10-09T08:39:57+0700",
+      "dateFinished": "2023-10-09T08:39:58+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111984"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"select * from user0.app_risk_1\").show()",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T08:40:04+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+-------+-----------+------------+---------------+------------+----------------+--------------------+--------------------+--------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+----------+----+\n|     id|code_gender|flag_own_car|flag_own_realty|cnt_children|amt_income_total|    name_income_type| name_education_type|  name_family_status|name_housing_type|days_birth|days_employed|flag_mobil|flag_work_phone|flag_phone|flag_email|occupation_type|cnt_fam_members|       dob|risk|\n+-------+-----------+------------+---------------+------------+----------------+--------------------+--------------------+--------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+----------+----+\n|5009042|          F|           N|              Y|           0|        148500.0|             Working|    Higher education|             Married|House / apartment|    -17641|         -889|         1|              0|         0|         0|     Core staff|              2|1975-06-22|   0|\n|5009421|          F|           N|              N|           0|         90000.0|             Working|Secondary / secon...|Single / not married|House / apartment|    -19304|         -464|         1|              1|         1|         0|     Core staff|              1|1970-12-02|   0|\n|5009742|          F|           N|              N|           0|        135000.0|             Working|Secondary / secon...|             Married|House / apartment|    -12328|        -2474|         1|              1|         1|         0|    Sales staff|              2|1990-01-07|   0|\n|5009777|          M|           N|              N|           0|        135000.0|             Working|Secondary / secon...|           Separated|House / apartment|    -14118|        -3174|         1|              0|         0|         0|       Laborers|              1|1985-02-12|   0|\n|5009797|          F|           N|              N|           0|        198000.0|           Pensioner|Secondary / secon...|               Widow|House / apartment|    -22002|       365243|         1|              0|         1|         0|          Other|              1|1963-07-14|   0|\n|5009813|          F|           N|              N|           1|        202500.0|             Working|Secondary / secon...|             Married|House / apartment|    -11813|        -3266|         1|              1|         1|         0|    Sales staff|              3|1991-06-06|   0|\n|5009851|          M|           Y|              N|           0|        360000.0|Commercial associate|Secondary / secon...|           Separated|     With parents|    -10276|         -556|         1|              1|         1|         0|        Drivers|              1|1995-08-21|   0|\n|5009880|          F|           N|              Y|           0|        157500.0|           Pensioner|Secondary / secon...|      Civil marriage|House / apartment|    -21635|       365243|         1|              0|         1|         0|          Other|              2|1964-07-15|   0|\n|5009951|          M|           N|              Y|           0|         90000.0|           Pensioner|Secondary / secon...|      Civil marriage|House / apartment|    -23083|       365243|         1|              0|         0|         0|          Other|              2|1960-07-28|   0|\n|5010163|          M|           Y|              Y|           0|        252000.0|             Working|Secondary / secon...|             Married|House / apartment|    -22117|        -1621|         1|              0|         1|         1| Security staff|              2|1963-03-21|   0|\n|5010682|          M|           Y|              Y|           0|        292500.0|             Working|    Higher education|             Married|House / apartment|    -10297|        -2231|         1|              0|         0|         0|       Managers|              2|1995-07-31|   0|\n|5021259|          F|           N|              Y|           0|        135000.0|           Pensioner|    Higher education|             Married|House / apartment|    -22747|       365243|         1|              0|         0|         0|          Other|              2|1961-06-29|   0|\n|5021260|          F|           N|              Y|           0|        135000.0|           Pensioner|    Higher education|             Married|House / apartment|    -22747|       365243|         1|              0|         0|         0|          Other|              2|1961-06-29|   1|\n|5021322|          M|           N|              Y|           0|        270000.0|             Working|Secondary / secon...|             Married|House / apartment|    -16896|         -248|         1|              0|         0|         0|       Laborers|              2|1977-07-06|   0|\n|5021471|          F|           N|              Y|           0|        157500.0|           Pensioner|Secondary / secon...|             Married|House / apartment|    -20407|       365243|         1|              0|         1|         0|          Other|              2|1967-11-25|   1|\n|5021632|          M|           N|              Y|           0|        157500.0|             Working|    Higher education|             Married|House / apartment|    -11701|        -3262|         1|              0|         0|         0|          Other|              2|1991-09-26|   0|\n|5021674|          M|           N|              Y|           1|        225000.0|             Working|Secondary / secon...|             Married|House / apartment|    -13788|         -640|         1|              1|         0|         0|       Laborers|              3|1986-01-08|   0|\n|5021700|          F|           N|              Y|           1|        180000.0|Commercial associate|Secondary / secon...|           Separated|House / apartment|    -18520|        -2101|         1|              0|         1|         1|     Core staff|              2|1973-01-24|   0|\n|5021942|          F|           Y|              Y|           0|        445500.0|Commercial associate|    Higher education|             Married|House / apartment|    -12477|         -456|         1|              0|         0|         0|       Managers|              2|1989-08-11|   0|\n|5022051|          M|           N|              Y|           0|        202500.0|             Working|    Higher education|Single / not married|House / apartment|    -12811|        -4327|         1|              0|         0|         0|          Other|              1|1988-09-11|   0|\n+-------+-----------+------------+---------------+------------+----------------+--------------------+--------------------+--------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+----------+----+\nonly showing top 20 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:34951/jobs/job?id=40",
+              "$$hashKey": "object:116476"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815437334_1485073639",
+      "id": "paragraph_1696815437334_1485073639",
+      "dateCreated": "2023-10-09T08:37:17+0700",
+      "dateStarted": "2023-10-09T08:40:05+0700",
+      "dateFinished": "2023-10-09T08:40:06+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111985"
+    },
+    {
+      "text": "%md\n##### Drop All data before running first\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T09:16:45+0700",
+      "progress": 0,
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<h5>Drop All data before running first</h5>\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696817779178_1009800972",
+      "id": "paragraph_1696817779178_1009800972",
+      "dateCreated": "2023-10-09T09:16:19+0700",
+      "dateStarted": "2023-10-09T09:16:45+0700",
+      "dateFinished": "2023-10-09T09:16:45+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111986"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"drop table user0.app\")\nspark.sql(\"drop table user0.app_ext\")\nspark.sql(\"drop table user0.credit\")\nspark.sql(\"drop table user0.credit_ext\")\nspark.sql(\"drop table user0.app_risk_1\")\nspark.sql(\"drop database user0\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T09:16:03+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "DataFrame[]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696815605043_901137118",
+      "id": "paragraph_1696815605043_901137118",
+      "dateCreated": "2023-10-09T08:40:05+0700",
+      "dateStarted": "2023-10-09T09:16:04+0700",
+      "dateFinished": "2023-10-09T09:16:09+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111987"
+    },
+    {
+      "text": "%sh\nhdfs dfs -rmr -skipTrash /user/userdev/cc_data\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T09:30:47+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/hadoop/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/usr/yava/3.1.0.0-0000/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]\nrmr: DEPRECATED: Please use '-rm -r' instead.\nDeleted /user/userdev/cc_data\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696817764232_265671662",
+      "id": "paragraph_1696817764232_265671662",
+      "dateCreated": "2023-10-09T09:16:04+0700",
+      "dateStarted": "2023-10-09T09:30:47+0700",
+      "dateFinished": "2023-10-09T09:30:50+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111988"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"\"\"\n    SELECT app.*, credit.resiko \n        FROM \n        (SELECT id,code_gender,flag_own_car,flag_own_realty,cnt_children,amt_income_total,    \n    name_income_type,name_education_type,name_family_status,name_housing_type,days_birth,\n    days_employed,flag_mobil,flag_work_phone,flag_phone,flag_email,\n              CASE WHEN trim(occupation_type) == '' THEN 'Other' ELSE occupation_type END as occupation_type,\n            cnt_fam_members, \n              date_add(current_date(), days_birth) as dob FROM \n                (SELECT distinct * FROM user0.app)) as app \n        JOIN\n        (SELECT id, sum(status_new) as resiko from \n            (SELECT id, status, CASE WHEN status in ('C','X','0') THEN 0 ELSE 1 END as status_new FROM user0.credit) \n        GROUP BY id) as credit\n        ON app.id = credit.id\"\"\").write.saveAsTable(name=\"user0.app_risk_2\", mode=\"overwrite\")\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:38:13+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=25",
+              "$$hashKey": "object:116674"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696818647523_1221079708",
+      "id": "paragraph_1696818647523_1221079708",
+      "dateCreated": "2023-10-09T09:30:47+0700",
+      "dateStarted": "2023-10-09T10:38:14+0700",
+      "dateFinished": "2023-10-09T10:39:43+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111989"
+    },
+    {
+      "text": "spark.sql(\"select * from user0.app_risk_2 limit 5\").show()",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T10:40:09+0700",
+      "progress": 50,
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+-------+-----------+------------+---------------+------------+----------------+----------------+--------------------+------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+----------+------+\n|     id|code_gender|flag_own_car|flag_own_realty|cnt_children|amt_income_total|name_income_type| name_education_type|name_family_status|name_housing_type|days_birth|days_employed|flag_mobil|flag_work_phone|flag_phone|flag_email|occupation_type|cnt_fam_members|       dob|resiko|\n+-------+-----------+------------+---------------+------------+----------------+----------------+--------------------+------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+----------+------+\n|5008954|          M|           N|              Y|           1|        225000.0|         Working|Secondary / secon...|           Married|House / apartment|    -10321|        -2808|         1|              0|         0|         0|          Other|              3|1995-07-07|     0|\n|5008959|          F|           Y|              Y|           0|        135000.0|         Working|Secondary / secon...|           Married|House / apartment|    -17785|        -1712|         1|              0|         0|         0|       Laborers|              2|1975-01-29|     0|\n|5009193|          F|           N|              N|           0|        270000.0|         Working|    Higher education|           Married|House / apartment|    -17573|        -5792|         1|              1|         1|         0|       Managers|              2|1975-08-29|     1|\n|5009459|          F|           N|              N|           0|        157500.0|         Working|Secondary / secon...|           Married|House / apartment|    -19702|        -9870|         1|              1|         1|         0|          Other|              2|1969-10-30|     0|\n|5010198|          M|           Y|              Y|           0|        135000.0|         Working|     Lower secondary|           Married|     With parents|     -9981|        -1866|         1|              0|         0|         1|       Laborers|              2|1996-06-11|     0|\n+-------+-----------+------------+---------------+------------+----------------+----------------+--------------------+------------------+-----------------+----------+-------------+----------+---------------+----------+----------+---------------+---------------+----------+------+\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=26",
+              "$$hashKey": "object:116732"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696822684597_73821758",
+      "id": "paragraph_1696822684597_73821758",
+      "dateCreated": "2023-10-09T10:38:04+0700",
+      "dateStarted": "2023-10-09T10:40:10+0700",
+      "dateFinished": "2023-10-09T10:40:13+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111990"
+    },
+    {
+      "text": "%spark.pyspark\nspark.sql(\"\"\"\n    SELECT app.*, credit.resiko \n        FROM \n        (SELECT id,code_gender,flag_own_car,flag_own_realty,cnt_children,amt_income_total,    \n    name_income_type,name_education_type,name_family_status,name_housing_type,days_birth,\n    days_employed,flag_mobil,flag_work_phone,flag_phone,flag_email,\n              CASE WHEN trim(occupation_type) == '' THEN 'Other' ELSE occupation_type END as occupation_type,\n            cnt_fam_members, \n              date_add(current_date(), days_birth) as dob FROM \n                (SELECT distinct * FROM user0.app)) as app \n        JOIN\n        (SELECT id, sum(status_new) as resiko from \n            (SELECT id, status, CASE WHEN status in ('C','X','0') THEN 0 ELSE 1 END as status_new FROM user0.credit) \n        GROUP BY id) as credit\n        ON app.id = credit.id\"\"\").write.saveAsTable(name=\"user0.app_risk_3\", mode=\"overwrite\")",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T11:03:15+0700",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://spark-demo01.labs247.com:35221/jobs/job?id=28",
+              "$$hashKey": "object:116780"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696822810022_596383970",
+      "id": "paragraph_1696822810022_596383970",
+      "dateCreated": "2023-10-09T10:40:10+0700",
+      "dateStarted": "2023-10-09T11:03:16+0700",
+      "dateFinished": "2023-10-09T11:04:31+0700",
+      "status": "FINISHED",
+      "$$hashKey": "object:111991"
+    },
+    {
+      "text": "%spark.pyspark\n",
+      "user": "anonymous",
+      "dateUpdated": "2023-10-09T11:03:16+0700",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1696824196330_191600380",
+      "id": "paragraph_1696824196330_191600380",
+      "dateCreated": "2023-10-09T11:03:16+0700",
+      "status": "READY",
+      "$$hashKey": "object:111992"
+    }
+  ],
+  "name": "Spark_Data_Cleansing",
+  "id": "2JC2VA31U",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.10.1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/Dedic/Training/Spark_Data_Cleansing"
+}
